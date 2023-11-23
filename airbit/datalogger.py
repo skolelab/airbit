@@ -12,7 +12,7 @@ class DataLogger(object):
     def __init__(self, t: time.struct_time):
         self.sdcard = SDCard()
         
-        self.LOG_FILE_NAME = f"{t.tm_year}.{t.tm_mon}.{t.tm_mday}.{t.tm_hour}.00{self.LOG_FILE_EXT}"
+        self.LOG_FILE_NAME = f"{t.tm_year}.{t.tm_mon}.{t.tm_mday}{self.LOG_FILE_EXT}"
         self.SD_LOG_FILE_PATH = self.SD_PATH + "/" + self.LOG_FILE_NAME
 
         files = os.listdir(self.SD_PATH)

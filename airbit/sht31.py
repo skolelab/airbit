@@ -7,9 +7,9 @@ from adafruit_sht31d import SHT31D
 
 
 class SHT31(SHT31D):
-    def __init__(self):
-        self.sda = board.GP14
-        self.scl = board.GP15
+    def __init__(self, sda=board.GP14, scl=board.GP15):
+        self.sda = sda
+        self.scl = scl
 
         try:
             self.i2c = busio.I2C(self.scl, self.sda)
