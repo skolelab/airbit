@@ -4,3 +4,5 @@ _main.py
 boot_out.txt
 
 .vscode
+
+*__pycache__/*
