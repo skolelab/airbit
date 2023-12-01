@@ -5,7 +5,7 @@ import sdcardio
 import storage
 
 class SDCard:
-    def __init__(self, cs=board.GP5, sck=board.GP2, mosi=board.GP3, miso=board.GP4):
+    def __init__(self, cs=board.GP5, sck=board.GP2, mosi=board.GP3, miso=board.GP4) -> None:
         self.spi = busio.SPI(sck, MOSI=mosi, MISO=miso)
 
         try:

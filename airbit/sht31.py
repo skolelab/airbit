@@ -7,7 +7,7 @@ from adafruit_sht31d import SHT31D
 
 
 class SHT31(SHT31D):
-    def __init__(self, sda=board.GP14, scl=board.GP15):
+    def __init__(self, sda=board.GP14, scl=board.GP15) -> None:
         self.sda = sda
         self.scl = scl
 
@@ -22,6 +22,11 @@ class SHT31(SHT31D):
 
 
 
-    def get_temp_hum(self):
+    def get_temp_hum(self) -> tuple[float, float]:
+        """Get the current temperature and humidity.
+
+        Returns:
+            tuple[float, float]: The current temperature (in C) and relative humidity (in %)
+        """
         return self.temperature, self.relative_humidity
     

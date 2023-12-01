@@ -1,20 +1,24 @@
 
-import time
 import busio
+import board
+import rtc
+import time
 
 from adafruit_gps import GPS
 
 
 
 class UltimateGPS:
-    def __init__(self, tx, rx):
+    def __init__(self, tx=board.GP16, rx=board.GP17) -> None:
 
         self.uart = busio.UART(tx, rx, baudrate=9600, timeout=30)
         self.GPS = GPS(uart=self.uart, debug=False)
-    
-        self.previous_update = None
 
-    def update(self):
+        self.clock = None
+        self.clock_sync = False
+        self.previous_update = None
+    
+    def _update(self) -> bool:
 
         if not self.GPS.update():
             return False
@@ -27,17 +31,38 @@ class UltimateGPS:
 
         return True
 
+    def sync_clock(self) -> bool:
+        """Try to sync the Real Time Clock, using the GPS timestamp.
 
-    def get_coordinates(self):
+        Returns:
+            bool: True if the clock was synched, False otherwise.
+        """
 
-        if not self.update() and self.previous_update is not None:
+        if self._update:
+            
+            self.clock = rtc.RTC()
+            self.clock.datetime = self.GPS.timestamp_utc
+            rtc.set_time_source(self.clock)
+            self.clock_sync = True
+
+            return True
+        
+        return False
+
+    def get_coordinates(self) -> tuple[float, float]:
+        """Get the current coordinates of the GPS.
+
+        Returns:
+            tuple[float, float]: Tuple containing (lat, lon) coordinates as floats.
+
+            The position will be the previous if the GPS could not update, or None
+            if no previous position is available.
+        """
+
+        if not self._update() and self.previous_update is not None:
             return self.previous_update[0], self.previous_update[1]
         
         return self.GPS.latitude, self.GPS.longitude
     
-    def get_time(self):
-        
-        if not self.update() and self.previous_update is not None:
-            return self.previous_update[2]
-        
-        return self.GPS.timestamp_utc
+    def get_time(self) -> time.struct_time:
+        return self.clock.datetime

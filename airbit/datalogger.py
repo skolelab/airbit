@@ -23,7 +23,15 @@ class DataLogger(object):
 
         print(f"Created log file {self.SD_LOG_FILE_PATH}")
 
-    def log(self, data):
+    def log(self, data: dict) -> None:
+        """Checks if an SD card is present and calls the log_sd method.
+
+        Args:
+            data (dict): The data to be logged.
+
+        Raises:
+            OSError: Raised if an SD card object has not been created.
+        """
 
         if self.sdcard is None:
             print("[SD] Unable to write to SDCard")
@@ -31,11 +39,18 @@ class DataLogger(object):
         
         self.log_sd(data)
         
+    def log_sd(self, data: dict) -> None:
+        """Calls verify data and logs the data to the SD card.
 
+        Args:
+            data (dict): The data to be logged.
 
-    def log_sd(self, data):
+        Raises:
+            ValueError: Raised if the data is malformed, or missing components.
+            OSError: Raised if the SD card is not accessible. (If it has been removed.)
+        """
 
-        if not self.verify_data(data):
+        if not self._verify_data(data):
             raise ValueError("Some values in the data are not correct")
 
         try:
@@ -47,5 +62,13 @@ class DataLogger(object):
             print(e)
             raise OSError("[SD] SD removed")
 
-    def verify_data(self, data):
+    def _verify_data(self, data: dict) -> bool:
+        """Verifies that the data is correctly formatted.
+
+        Args:
+            data (dict): Data to be verified
+
+        Returns:
+            bool: True if the expected data is correctly formatted. False otherwise
+        """
         return True
