@@ -12,13 +12,13 @@ class DataLogger(object):
     def __init__(self, t: time.struct_time):
         self.sdcard = SDCard()
         
-        self.LOG_FILE_NAME = f"{t.tm_year}.{t.tm_mon}.{t.tm_mday}{self.LOG_FILE_EXT}"
+        self.LOG_FILE_NAME = f"{t.tm_year}-{t.tm_mon}-{t.tm_mday}{self.LOG_FILE_EXT}"
         self.SD_LOG_FILE_PATH = self.SD_PATH + "/" + self.LOG_FILE_NAME
 
         files = os.listdir(self.SD_PATH)
         if self.SD_LOG_FILE_PATH not in files:
             with open(self.SD_LOG_FILE_PATH, "w") as fp:
-                fp.write("Date,Time,Coordinates,Temperature,Humidity,PM25,PM10\n")
+                fp.write("Date(DD.MM.YYYY),Time(HH:MM:SS),Coordinates(Lat,Lon),Temperature(°C),Humidity(%),PM25,PM100\n")
                 fp.flush()
 
         print(f"Created log file {self.SD_LOG_FILE_PATH}")
@@ -50,8 +50,12 @@ class DataLogger(object):
             OSError: Raised if the SD card is not accessible. (If it has been removed.)
         """
 
-        if not self._verify_data(data):
-            raise ValueError("Some values in the data are not correct")
+        try:
+            data = self._verify_data(data)
+
+        except KeyError:
+            print("Missing or malformed data")
+            raise
 
         try:
             with open(self.SD_LOG_FILE_PATH, 'a') as fp:
@@ -62,13 +66,42 @@ class DataLogger(object):
             print(e)
             raise OSError("[SD] SD removed")
 
-    def _verify_data(self, data: dict) -> bool:
+    def _verify_data(self, data: dict) -> (bool, list):
         """Verifies that the data is correctly formatted.
 
         Args:
             data (dict): Data to be verified
 
         Returns:
-            bool: True if the expected data is correctly formatted. False otherwise
+            list: List containing data converted to strings.
         """
-        return True
+        formatted_data = []
+
+        dt = data["datetime"]
+        coords = data["coordinates"]
+        temphum = data["temphum"]
+        dust = data["dust"]
+
+        if dt is None:
+            dt = time.struct_time()
+
+        if coords is None:
+            coords = (None, None)
+        
+        if temphum is None:
+            temphum = (None, None)
+
+        if dust is None:
+            dust = {"pm25 standard": None, "pm100 standard": None}
+
+                
+        formatted_data.append(f"{dt.tm_mday}.{dt.tm_mon}.{dt.tm_year}")
+        formatted_data.append(f"{dt.tm_hour}:{dt.tm_min}:{dt.tm_sec}")
+        formatted_data.append(f"({coords[0]},{coords[1]})")
+        formatted_data.append(f"{temphum[0]:.1f}")
+        formatted_data.append(f"{temphum[1]:.1f}")
+        formatted_data.append(f"{dust['pm25 standard']:.1f}")
+        formatted_data.append(f"{dust['pm100 standard']:.1f}")
+
+
+        return formatted_data
