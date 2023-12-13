@@ -18,7 +18,7 @@ class DataLogger(object):
         files = os.listdir(self.SD_PATH)
         if self.SD_LOG_FILE_PATH not in files:
             with open(self.SD_LOG_FILE_PATH, "w") as fp:
-                fp.write("Date(DD.MM.YYYY),Time(HH:MM:SS),Coordinates(Lat,Lon),Temperature(°C),Humidity(%),PM25,PM100\n")
+                fp.write("Date(DD.MM.YYYY),Time(HH:MM:SS),Lat,Lon,Temperature(°C),Humidity(%),PM25,PM100\n")
                 fp.flush()
 
         print(f"Created log file {self.SD_LOG_FILE_PATH}")
