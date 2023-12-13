@@ -12,7 +12,7 @@ class DataLogger(object):
     def __init__(self, t: time.struct_time):
         self.sdcard = SDCard()
         
-        self.LOG_FILE_NAME = f"{t.tm_year}-{t.tm_mon}-{t.tm_mday}{self.LOG_FILE_EXT}"
+        self.LOG_FILE_NAME = f"{t.tm_year:02d}-{t.tm_mon:02d}-{t.tm_mday:02d}{self.LOG_FILE_EXT}"
         self.SD_LOG_FILE_PATH = self.SD_PATH + "/" + self.LOG_FILE_NAME
 
         files = os.listdir(self.SD_PATH)
@@ -95,9 +95,9 @@ class DataLogger(object):
             dust = {"pm25 standard": None, "pm100 standard": None}
 
                 
-        formatted_data.append(f"{dt.tm_mday}.{dt.tm_mon}.{dt.tm_year}")
-        formatted_data.append(f"{dt.tm_hour}:{dt.tm_min}:{dt.tm_sec}")
-        formatted_data.append(f"({coords[0]},{coords[1]})")
+        formatted_data.append(f"{dt.tm_mday:02d}.{dt.tm_mon:02d}.{dt.tm_year:04d}")
+        formatted_data.append(f"{dt.tm_hour:02d}:{dt.tm_min:02d}:{dt.tm_sec:02d}")
+        formatted_data.append(f"{coords[0]},{coords[1]}")
         formatted_data.append(f"{temphum[0]:.1f}")
         formatted_data.append(f"{temphum[1]:.1f}")
         formatted_data.append(f"{dust['pm25 standard']:.1f}")
