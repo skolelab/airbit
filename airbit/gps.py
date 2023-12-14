@@ -38,11 +38,10 @@ class UltimateGPS:
             bool: True if the clock was synched, False otherwise.
         """
 
-        if self._update():
-            
-            self.clock = rtc.RTC()
-            self.clock.datetime = self.GPS.timestamp_utc
-            rtc.set_time_source(self.clock)
+        if self._update() and self.GPS.timestamp_utc.tm_year >= 2023:
+
+            r = rtc.RTC()
+            r.datetime = self.GPS.timestamp_utc
             self.clock_sync = True
 
             return True
