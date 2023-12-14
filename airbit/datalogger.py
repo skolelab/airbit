@@ -99,8 +99,8 @@ class DataLogger(object):
         formatted_data.append(f"{temphum[1]:.1f}")
 
         if dust is None:
-            formatted_data.append(f"{dust['pm25 standard']}")
-            formatted_data.append(f"{dust['pm100 standard']}")
+            formatted_data.append(f"{None}")
+            formatted_data.append(f"{None}")
         else:
             formatted_data.append(f"{dust['pm25 standard']:.1f}")
             formatted_data.append(f"{dust['pm100 standard']:.1f}")
