@@ -66,7 +66,7 @@ class DataLogger(object):
             print(e)
             raise OSError("[SD] SD removed")
 
-    def _verify_data(self, data: dict) -> list:
+    def _verify_data(self, data: dict) -> (bool, list):
         """Verifies that the data is correctly formatted.
 
         Args:
@@ -91,19 +91,17 @@ class DataLogger(object):
         if temphum is None:
             temphum = (None, None)
 
-                        
+        if dust is None:
+            dust = {"pm25 standard": None, "pm100 standard": None}
+
+                
         formatted_data.append(f"{dt.tm_mday:02d}.{dt.tm_mon:02d}.{dt.tm_year:04d}")
         formatted_data.append(f"{dt.tm_hour:02d}:{dt.tm_min:02d}:{dt.tm_sec:02d}")
         formatted_data.append(f"{coords[0]},{coords[1]}")
         formatted_data.append(f"{temphum[0]:.1f}")
         formatted_data.append(f"{temphum[1]:.1f}")
-
-        if dust is None:
-            formatted_data.append(f"{None}")
-            formatted_data.append(f"{None}")
-        else:
-            formatted_data.append(f"{dust['pm25 standard']:.1f}")
-            formatted_data.append(f"{dust['pm100 standard']:.1f}")
+        formatted_data.append(f"{dust['pm25 standard']:.1f}")
+        formatted_data.append(f"{dust['pm100 standard']:.1f}")
 
 
         return formatted_data
